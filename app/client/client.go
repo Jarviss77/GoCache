@@ -1,5 +1,3 @@
-// +build client 
-
 package main
 
 import (
