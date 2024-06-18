@@ -1,5 +1,3 @@
-// +build server
-
 package main
 
 import (
@@ -34,7 +32,6 @@ func run() (err error) {
 
 	log.Printf("listening %v", l.Addr())  // Log the address the server is listening on.
 
-	_, err = l.Accept()  // Accept waits for and returns the next connection to the listener.
 	c, err := l.Accept()  // Accept another connection from the listener.
 	if err != nil {
 		return errors.Wrap(err, "accept")  // Wrap and return the error with context if Accept fails.
