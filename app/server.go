@@ -7,6 +7,7 @@ import (
 	"log"          
 	"net"          // Package net provides a portable interface for network I/O.
 	"os"           // Package os provides a platform-independent interface to operating system functionality.
+	"strings"      
 	"github.com/pkg/errors"  // Package errors implements functions to manipulate errors.
 )
 
@@ -48,18 +49,26 @@ func handleConnections(c net.Conn) {
 
 	for{
 		buf := make([]byte, 128)  
-		_, err := c.Read(buf)  
+		r, err := c.Read(buf)  
 		if err != nil {
 			log.Printf("error: %v", errors.Wrap(err, "read command"))  
 			return
 		}
+		command := string(buf[:r])
 		
-		log.Printf("read command:\n%s", buf)  
-		_, err = c.Write([]byte("+PONG\r\n"))  
-		if err != nil {
-			log.Printf("error: %v", errors.Wrap(err, "write response"))  
-			return
+		log.Printf("read command:\n%s", buf)
+		trimmedCommand := strings.TrimSpace(command)
+		// fmt.Printf("response: %s\n", trimmedCommand)
+		// fmt.Printf("response: %s\n", trimmedCommand == "PING")
+		
+		if(trimmedCommand == "PING"){
+			_, err = c.Write([]byte("+PONG\r\n"))  
+			if err != nil {
+				log.Printf("error: %v", errors.Wrap(err, "write response"))  
+				return
+			}
 		}
+
 	}
 
 }
