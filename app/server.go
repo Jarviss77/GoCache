@@ -33,6 +33,7 @@ func run() (err error) {
 
 	log.Printf("listening %v", l.Addr())  
 
+	// Accept multiple client connections
 	for {
 		c, err := l.Accept()  
 		if err != nil {
@@ -42,6 +43,7 @@ func run() (err error) {
 	}
 }
 
+// This handleConnections function reads a command from the client and writes a response.
 func handleConnections(c net.Conn) {
 
 	for{
