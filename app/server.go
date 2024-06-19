@@ -33,26 +33,33 @@ func run() (err error) {
 
 	log.Printf("listening %v", l.Addr())  
 
-	c, err := l.Accept()  
-	if err != nil {
-		return errors.Wrap(err, "accept") 
+	for {
+		c, err := l.Accept()  
+		if err != nil {
+			return errors.Wrap(err, "accept") 
+		}
+		go handleConnections(c)
 	}
-	defer closeIt(c, &err, "close connection")  
+}
 
-	buf := make([]byte, 128)  
-	_, err = c.Read(buf)  
-	if err != nil {
-		return errors.Wrap(err, "read command") 
+func handleConnections(c net.Conn) {
+
+	for{
+		buf := make([]byte, 128)  
+		_, err := c.Read(buf)  
+		if err != nil {
+			log.Printf("error: %v", errors.Wrap(err, "read command"))  
+			return
+		}
+		
+		log.Printf("read command:\n%s", buf)  
+		_, err = c.Write([]byte("+PONG\r\n"))  
+		if err != nil {
+			log.Printf("error: %v", errors.Wrap(err, "write response"))  
+			return
+		}
 	}
-	log.Printf("read command:\n%s", buf)  
 
-	// Write the response "+PONG\r\n" to the connection.
-	_, err = c.Write([]byte("+PONG\r\n"))  
-	if err != nil {
-		return errors.Wrap(err, "write response")  // Wrap and return the error with context if Write fails.
-	}
-
-	return nil  
 }
 
 func closeIt(c io.Closer, errp *error, msg string) {
