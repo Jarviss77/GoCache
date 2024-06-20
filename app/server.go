@@ -26,7 +26,7 @@ func main() {
 
 func run() (err error) {
 	l, err := net.Listen("tcp", *listen)  // Listen for incoming TCP connections on the address specified by the command-line flag.
-	if err != nil {
+	if err != nil { 
 		return errors.Wrap(err, "listen")  
 	}
 	// Defer closing the listener and handle any error during closure
