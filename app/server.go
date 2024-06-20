@@ -46,6 +46,10 @@ func run() (err error) {
 
 // This handleConnections function reads a command from the client and writes a response.
 func handleConnections(c net.Conn) {
+	var commands = map[string]func([]Value) ReturnValue{
+		"PING": ping,
+		"ECHO": echo,
+	}
 
 	for{
 		buf := make([]byte, 128)  
@@ -58,16 +62,39 @@ func handleConnections(c net.Conn) {
 		
 		log.Printf("read command:\n%s", buf)
 		trimmedCommand := strings.TrimSpace(command)
+		args := strings.Split(trimmedCommand, " ")
+		cmd := strings.ToUpper(args[0])
 		// fmt.Printf("response: %s\n", trimmedCommand)
 		// fmt.Printf("response: %s\n", trimmedCommand == "PING")
 		
-		if(trimmedCommand == "PING"){
-			_, err = c.Write([]byte("+PONG\r\n"))  
+		if handler, exists := commands[cmd]; exists {
+			var cmdArgs []Value
+
+			cmdArgs = append(cmdArgs, Value{str: args})
+			
+
+			fmt.Printf("response: %s\n", cmdArgs)
+			response := handler(cmdArgs)
+			_, err = c.Write([]byte("+" + response.str + "\r\n"))
+			if err != nil {
+				log.Printf("error: %v", errors.Wrap(err, "write response"))  
+				return
+			}
+		} else {
+			_, err = c.Write([]byte("-ERR unknown command '" + trimmedCommand + "'\r\n"))
 			if err != nil {
 				log.Printf("error: %v", errors.Wrap(err, "write response"))  
 				return
 			}
 		}
+		
+		// if(trimmedCommand == "PING"){
+		// 	_, err = c.Write([]byte("+PONG\r\n"))  
+		// 	if err != nil {
+		// 		log.Printf("error: %v", errors.Wrap(err, "write response"))  
+		// 		return
+		// 	}
+		// }
 
 	}
 
