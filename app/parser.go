@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"strconv"
 )
 
@@ -21,7 +20,7 @@ type RESPData interface {
 
 func parseCommand(buf []byte) (RESPData, error) {
 	//*2\r\n$4\r\nECHO\r\n$5\r\nmango\r\n
-	log.Printf("parseCommand: %s", buf)
+
 	var data RESPData
 
 	switch buf[0] {
@@ -51,7 +50,7 @@ type Array struct {
 func CreateArray(buf []byte) (Array, error) {
 	
 	r := bytes.IndexByte(buf, '\r') // Find first \r
-	log.Printf("CreateArray: %d", r)
+
 	if r == -1 {
 		return Array{}, fmt.Errorf("Invalid RESP format")
 	}
@@ -107,7 +106,7 @@ func (a Array) String() string {
 		}
 		s += v.String()
 	}
-	log.Printf("Array: %s", s)
+
 	return s
 }
 

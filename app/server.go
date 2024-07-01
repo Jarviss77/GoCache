@@ -53,18 +53,14 @@ func handleConnections(c net.Conn) {
 
 	for{
 		buf := make([]byte, 1024) 
-		r, err := c.Read(buf)
-		log.Printf("read command0:\n%s", buf)
+		_, err := c.Read(buf)
 		if err != nil {
 			log.Printf("error: %v", errors.Wrap(err, "read command"))  
 			return
 		}
-		command := string(buf[:r])
-		log.Printf("read command1:\n%s", command)
-		
-		log.Printf("read command2:\n%s", buf)
+
 		input, err := parseCommand(buf)
-		log.Printf("read command3:\n%s", input)
+
 		if err != nil {
 			log.Printf("error: %v", errors.Wrap(err, "parse command"))
 			return
@@ -72,18 +68,13 @@ func handleConnections(c net.Conn) {
 
 		trimmedCommand := strings.TrimSpace(input.String())
 		args := strings.Split(trimmedCommand, " ")
-		log.Printf("read command4:\n%s", args)
 		cmd := strings.ToUpper(args[0])
-		// fmt.Printf("response: %s\n", trimmedCommand)
-		// fmt.Printf("response: %s\n", trimmedCommand == "PING")
 		
 		if handler, exists := commands[cmd]; exists {
 			var cmdArgs []Value
 
 			cmdArgs = append(cmdArgs, Value{str: args})
-			
 
-			fmt.Printf("response: %s\n", cmdArgs)
 			response := handler(cmdArgs)
 			_, err = c.Write([]byte("+" + response.str + "\r\n"))
 			if err != nil {
@@ -98,14 +89,6 @@ func handleConnections(c net.Conn) {
 			}
 		}
 		
-		// if(trimmedCommand == "PING"){
-		// 	_, err = c.Write([]byte("+PONG\r\n"))  
-		// 	if err != nil {
-		// 		log.Printf("error: %v", errors.Wrap(err, "write response"))  
-		// 		return
-		// 	}
-		// }
-
 	}
 
 }
