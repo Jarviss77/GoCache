@@ -9,7 +9,7 @@ type ReturnValue struct{
 }
 
 func ping(args []Value) ReturnValue{
-	return ReturnValue{str: "+PONG\r\n"}
+	return ReturnValue{str: "PONG"}
 }
 
 func echo(args []Value) ReturnValue{

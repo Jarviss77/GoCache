@@ -52,17 +52,27 @@ func handleConnections(c net.Conn) {
 	}
 
 	for{
-		buf := make([]byte, 128)  
-		r, err := c.Read(buf)  
+		buf := make([]byte, 1024) 
+		r, err := c.Read(buf)
+		log.Printf("read command0:\n%s", buf)
 		if err != nil {
 			log.Printf("error: %v", errors.Wrap(err, "read command"))  
 			return
 		}
 		command := string(buf[:r])
+		log.Printf("read command1:\n%s", command)
 		
-		log.Printf("read command:\n%s", buf)
-		trimmedCommand := strings.TrimSpace(command)
+		log.Printf("read command2:\n%s", buf)
+		input, err := parseCommand(buf)
+		log.Printf("read command3:\n%s", input)
+		if err != nil {
+			log.Printf("error: %v", errors.Wrap(err, "parse command"))
+			return
+		}
+
+		trimmedCommand := strings.TrimSpace(input.String())
 		args := strings.Split(trimmedCommand, " ")
+		log.Printf("read command4:\n%s", args)
 		cmd := strings.ToUpper(args[0])
 		// fmt.Printf("response: %s\n", trimmedCommand)
 		// fmt.Printf("response: %s\n", trimmedCommand == "PING")
