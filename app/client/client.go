@@ -14,7 +14,7 @@ func main() {
     }
     defer conn.Close()
 
-    _, err = conn.Write([]byte("*2\r\n$3\r\nGET\r\n$9\r\nraspberry\r\n"))
+    _, err = conn.Write([]byte("*2\r\n$4\r\nECHO\r\n$4\r\nHello\r\n"))
     if err != nil {
         fmt.Fprintf(os.Stderr, "error: %v\n", err)
         os.Exit(1)
