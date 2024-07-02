@@ -1,3 +1,5 @@
 app/test/
 
 .vscode/
+codecrafters.yml
+spawn_redis_sever.sh
