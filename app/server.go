@@ -49,6 +49,8 @@ func handleConnections(c net.Conn) {
 	var commands = map[string]func([]Value) ReturnValue{
 		"PING": ping,
 		"ECHO": echo,
+		"SET": set,
+		"GET": get,
 	}
 
 	for{
@@ -60,6 +62,7 @@ func handleConnections(c net.Conn) {
 		}
 
 		input, err := parseCommand(buf)
+		log.Printf("input: %v", input)
 
 		if err != nil {
 			log.Printf("error: %v", errors.Wrap(err, "parse command"))
@@ -67,7 +70,9 @@ func handleConnections(c net.Conn) {
 		}
 
 		trimmedCommand := strings.TrimSpace(input.String())
+
 		args := strings.Split(trimmedCommand, " ")
+
 		cmd := strings.ToUpper(args[0])
 		
 		if handler, exists := commands[cmd]; exists {
@@ -76,7 +81,7 @@ func handleConnections(c net.Conn) {
 			cmdArgs = append(cmdArgs, Value{str: args})
 
 			response := handler(cmdArgs)
-			_, err = c.Write([]byte("+" + response.str + "\r\n"))
+			_, err = c.Write([]byte(response.str + "\r\n"))
 			if err != nil {
 				log.Printf("error: %v", errors.Wrap(err, "write response"))  
 				return
