@@ -1,1 +1,1 @@
-# RediGo
+# GoCache

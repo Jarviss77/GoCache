@@ -21,7 +21,8 @@ func ping(args []Value) ReturnValue{
 
 func echo(args []Value) ReturnValue{
 	if len(args[0].str) > 1 {
-		return ReturnValue{str: args[0].str[1]}
+		BulkStringSize := "$" + strconv.Itoa(len(args[0].str[1])) + "\r\n"
+		return ReturnValue{str: BulkStringSize + args[0].str[1]}
 	}
 	return ReturnValue{str: "+\r\n"}
 }
