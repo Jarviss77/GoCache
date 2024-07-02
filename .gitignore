@@ -2,4 +2,4 @@ app/test/
 
 .vscode/
 codecrafters.yml
-spawn_redis_sever.sh
+spawn_redis_server.sh

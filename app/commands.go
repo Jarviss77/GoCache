@@ -9,7 +9,7 @@ type Value struct{
 	str []string
 }
 
-var database = make(map[string]string)
+var tree = &AVLTree{}
 
 type ReturnValue struct{
 	str string
@@ -34,7 +34,7 @@ func set(args []Value) ReturnValue{
 		return ReturnValue{str: "-ERR wrong number of arguments for 'set' command"}
 	}
 
-	database[args[0].str[1]] = args[0].str[2]
+	tree.Insert(args[0].str[1] ,args[0].str[2])
 
 	return ReturnValue{str: "+OK"}
 }
@@ -44,7 +44,7 @@ func get(args []Value) ReturnValue{
 	if len(args) != 1 {
 		return ReturnValue{str: "-ERR wrong number of arguments for 'get' command"}
 	}
-	if val, ok := database[args[0].str[1]]; ok {
+	if val, ok := tree.Search(args[0].str[1]); ok {
 		BulkStringSize := "$" + strconv.Itoa(len(val)) + "\r\n"
 		return ReturnValue{str: BulkStringSize + val}
 	}
